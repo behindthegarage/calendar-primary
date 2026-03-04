@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Calendar Primary — {{ page_title }}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='dashboard.css') }}">
+</head>
+<body>
+  <div class="container">
+    <header class="header">
+      <div>
+        <h1>Calendar Primary</h1>
+        <p class="today-date">{{ current_date }}</p>
+      </div>
+      <nav class="quick-nav" aria-label="Dashboard views">
+        <a href="/" class="nav-link {% if active_view == 'home' %}active{% endif %}">Home</a>
+        <a href="/today" class="nav-link {% if active_view == 'today' %}active{% endif %}">Today</a>
+        <a href="/week" class="nav-link {% if active_view == 'week' %}active{% endif %}">Week</a>
+        <a href="/deadlines" class="nav-link {% if active_view == 'deadlines' %}active{% endif %}">Deadlines</a>
+      </nav>
+    </header>
+
+    <main class="sections {% if show_today and show_week and show_deadlines %}three-column{% endif %}">
+      {% if show_today %}
+      <section class="panel panel-today">
+        <h2>Today's Events</h2>
+
+        {% if today_events %}
+          <div class="event-list">
+            {% for event in today_events %}
+            <article class="event-card">
+              <div class="event-content">
+                <h3>{{ event.title }}</h3>
+                <p class="event-time">{{ event.time_label }}</p>
+                {% if event.description %}<p class="event-description">{{ event.description }}</p>{% endif %}
+              </div>
+              <span class="category-pill {{ event.category_class }}">{{ event.category }}</span>
+            </article>
+            {% endfor %}
+          </div>
+        {% else %}
+          <p class="empty-state">No events today. Enjoy the breathing room ✨</p>
+        {% endif %}
+      </section>
+      {% endif %}
+
+      {% if show_week %}
+      <section class="panel panel-week">
+        <h2>This Week</h2>
+
+        {% if week_events %}
+          <div class="event-list compact">
+            {% for event in week_events %}
+            <article class="event-card compact-card">
+              <div class="event-content">
+                <h3>{{ event.title }}</h3>
+                {% if event.day_label %}<p class="event-day">{{ event.day_label }}</p>{% endif %}
+                <p class="event-time">{{ event.time_label }}</p>
+              </div>
+              <span class="category-pill {{ event.category_class }}">{{ event.category }}</span>
+            </article>
+            {% endfor %}
+          </div>
+        {% else %}
+          <p class="empty-state">No events this week.</p>
+        {% endif %}
+      </section>
+      {% endif %}
+
+      {% if show_deadlines %}
+      <section class="panel panel-deadlines">
+        <h2>Upcoming Deadlines</h2>
+
+        {% if deadlines %}
+          <div class="event-list compact">
+            {% for event in deadlines %}
+            <article class="event-card deadline-card compact-card">
+              <div class="event-content">
+                <h3>{{ event.title }}</h3>
+                {% if event.day_label %}<p class="event-day">{{ event.day_label }}</p>{% endif %}
+                <p class="event-time">{{ event.time_label }}</p>
+              </div>
+              <span class="category-pill {{ event.category_class }}">{{ event.category }}</span>
+            </article>
+            {% endfor %}
+          </div>
+        {% else %}
+          <p class="empty-state">No upcoming deadlines. Nice work.</p>
+        {% endif %}
+      </section>
+      {% endif %}
+    </main>
+  </div>
+</body>
+</html>

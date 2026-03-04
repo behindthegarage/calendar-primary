@@ -1,68 +1,82 @@
-"""Calendar Skill — Natural language calendar management for CK Calendar.
+"""Calendar Primary package.
 
-This module provides intent detection, parsing, and database integration
-for the Kinawa Command Center Calendar system.
+Application modules should import explicit submodules, e.g.:
+    from calendar.calendar_api import add_event
 
-Usage:
-    from skills.calendar import parse_intent, add_event, get_events
-    
-    # Detect calendar intent in a message
-    result = parse_intent("Meeting tomorrow at 3pm")
-    if result.confidence > 0.85:
-        add_event(result.to_event())
+Compatibility note:
+This project intentionally uses the top-level package name ``calendar``.
+That collides with Python's stdlib module of the same name, so we re-export
+stdlib calendar symbols (monthrange, timegm, etc.) to keep third-party imports
+working (requests/dateutil/http.cookiejar commonly rely on them).
 """
 
-__version__ = "1.0.0"
-__author__ = "Hari"
+from __future__ import annotations
 
-# Core parsing and detection
-from .nlp_parser import parse_calendar_intent, CalendarIntent
-from .intent_detector import detect_intent, ConfidenceLevel
+import importlib.util
+import sys
+import sysconfig
+from pathlib import Path
 
-# Database API
+
+def _load_stdlib_calendar_module():
+    stdlib_calendar_path = Path(sysconfig.get_path("stdlib")) / "calendar.py"
+    spec = importlib.util.spec_from_file_location("_calendar_stdlib", stdlib_calendar_path)
+    if spec is None or spec.loader is None:
+        raise RuntimeError(f"Unable to load stdlib calendar module from {stdlib_calendar_path}")
+
+    module = importlib.util.module_from_spec(spec)
+    sys.modules[spec.name] = module
+    spec.loader.exec_module(module)
+    return module
+
+
+_stdlib_calendar = _load_stdlib_calendar_module()
+
+# Re-export stdlib attributes so imports like `from calendar import monthrange`
+# keep working even though this package shadows the stdlib module name.
+for _name in dir(_stdlib_calendar):
+    if _name.startswith("__"):
+        continue
+    if _name in globals():
+        continue
+    globals()[_name] = getattr(_stdlib_calendar, _name)
+
+
+del _name
+
+
+from .db import get_db, init_db
 from .calendar_api import (
     add_event,
-    get_events,
-    find_event_by_time,
-    update_event,
     delete_event,
+    get_event_by_id,
+    get_events,
+    get_today_events,
+    get_week_events,
     search_events,
-    Event,
+    update_event,
 )
 
-# Category utilities
-from .categories import suggest_category, get_categories, validate_category
-
-# Response formatting
-from .formatters import format_event_list, format_confirmation, format_query_result
-
 __all__ = [
-    # Version
-    "__version__",
-    "__author__",
-    
-    # Parsing
-    "parse_calendar_intent",
-    "CalendarIntent",
-    "detect_intent",
-    "ConfidenceLevel",
-    
-    # Database API
+    # stdlib compatibility (selected commonly-used names)
+    "timegm",
+    "monthrange",
+    "weekday",
+    "isleap",
+    "day_name",
+    "day_abbr",
+    "month_name",
+    "month_abbr",
+    # db exports
+    "init_db",
+    "get_db",
+    # calendar API exports
     "add_event",
     "get_events",
-    "find_event_by_time",
+    "get_event_by_id",
     "update_event",
     "delete_event",
     "search_events",
-    "Event",
-    
-    # Categories
-    "suggest_category",
-    "get_categories",
-    "validate_category",
-    
-    # Formatters
-    "format_event_list",
-    "format_confirmation",
-    "format_query_result",
+    "get_today_events",
+    "get_week_events",
 ]

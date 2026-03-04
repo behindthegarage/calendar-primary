@@ -1,0 +1,187 @@
+:root {
+  --bg: #f7f8fb;
+  --panel: #ffffff;
+  --text: #1f2937;
+  --muted: #6b7280;
+  --border: #e5e7eb;
+
+  --work: #2563eb;
+  --personal: #16a34a;
+  --kids-club: #ea580c;
+  --staff: #7e22ce;
+  --deadlines: #dc2626;
+  --projects: #4b5563;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: Inter, "Segoe UI", Roboto, Arial, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+}
+
+.container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+h1 {
+  margin: 0;
+  font-size: 1.5rem;
+}
+
+h2 {
+  margin: 0 0 0.75rem;
+  font-size: 1.05rem;
+}
+
+h3 {
+  margin: 0;
+  font-size: 0.98rem;
+}
+
+.today-date {
+  margin: 0.2rem 0 0;
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+
+.quick-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+
+.nav-link {
+  text-decoration: none;
+  color: var(--text);
+  border: 1px solid var(--border);
+  background: #fff;
+  padding: 0.4rem 0.7rem;
+  border-radius: 999px;
+  font-size: 0.9rem;
+}
+
+.nav-link.active {
+  background: #111827;
+  border-color: #111827;
+  color: #fff;
+}
+
+.sections {
+  display: grid;
+  gap: 1rem;
+}
+
+.sections.three-column {
+  grid-template-columns: 1.2fr 1fr 1fr;
+}
+
+.panel {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 0.9rem;
+}
+
+.panel-today {
+  border-top: 4px solid #111827;
+}
+
+.panel-deadlines {
+  border-top: 4px solid var(--deadlines);
+}
+
+.event-list {
+  display: grid;
+  gap: 0.65rem;
+}
+
+.event-card {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+  align-items: flex-start;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: #fff;
+  padding: 0.65rem;
+}
+
+.compact-card {
+  padding: 0.55rem;
+}
+
+.deadline-card {
+  border-left: 4px solid var(--deadlines);
+}
+
+.event-content {
+  min-width: 0;
+}
+
+.event-time,
+.event-day,
+.event-description {
+  margin: 0.2rem 0 0;
+  color: var(--muted);
+  font-size: 0.88rem;
+}
+
+.event-description {
+  line-height: 1.35;
+}
+
+.category-pill {
+  border-radius: 999px;
+  padding: 0.2rem 0.55rem;
+  color: #fff;
+  font-size: 0.74rem;
+  line-height: 1.35;
+  white-space: nowrap;
+  align-self: flex-start;
+}
+
+.category-work { background: var(--work); }
+.category-personal { background: var(--personal); }
+.category-kids-club { background: var(--kids-club); }
+.category-staff { background: var(--staff); }
+.category-deadlines { background: var(--deadlines); }
+.category-projects { background: var(--projects); }
+
+.empty-state {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+
+@media (max-width: 900px) {
+  .sections.three-column {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 620px) {
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .event-card {
+    flex-direction: column;
+  }
+}
