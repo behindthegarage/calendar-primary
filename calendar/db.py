@@ -1,6 +1,7 @@
 """Database utilities for Calendar Primary (Wave 1a)."""
 
 from __future__ import annotations
+import os
 
 import json
 import sqlite3
@@ -14,7 +15,7 @@ except ImportError:  # Support direct/script-style loading
     from models import Event  # type: ignore
 
 
-DB_PATH = Path("/home/openclaw/.openclaw/workspace/calendar.db")
+DB_PATH = Path(os.environ.get("CALENDAR_DB_PATH", "/home/openclaw/calendar/calendar.db"))
 SCHEMA_PATH = Path(__file__).resolve().parent / "schema.sql"
 
 # Suggested categories only; category values are intentionally free-form text.

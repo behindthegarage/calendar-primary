@@ -1,0 +1,15 @@
+[Unit]
+Description=Calendar Primary Dashboard
+After=network.target
+
+[Service]
+Type=simple
+User=openclaw
+WorkingDirectory=/home/openclaw/calendar
+Environment=CALENDAR_DB_PATH=/home/openclaw/calendar/calendar.db
+ExecStart=/usr/bin/python3 /home/openclaw/calendar/dashboard.py
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target
