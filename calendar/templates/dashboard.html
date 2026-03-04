@@ -17,9 +17,18 @@
         <a href="/" class="nav-link {% if active_view == 'home' %}active{% endif %}">Home</a>
         <a href="/today" class="nav-link {% if active_view == 'today' %}active{% endif %}">Today</a>
         <a href="/week" class="nav-link {% if active_view == 'week' %}active{% endif %}">Week</a>
+        <a href="/month" class="nav-link {% if active_view == 'month' %}active{% endif %}">Month</a>
         <a href="/deadlines" class="nav-link {% if active_view == 'deadlines' %}active{% endif %}">Deadlines</a>
       </nav>
     </header>
+
+    {% if nav_prev and nav_next %}
+    <nav class="view-navigation" aria-label="Date navigation">
+      <a href="{{ nav_prev }}" class="nav-arrow">{{ nav_prev_label }}</a>
+      <a href="/today" class="nav-today">Today</a>
+      <a href="{{ nav_next }}" class="nav-arrow">{{ nav_next_label }}</a>
+    </nav>
+    {% endif %}
 
     <main class="sections {% if show_today and show_week and show_deadlines %}three-column{% endif %}">
       {% if show_today %}
@@ -64,6 +73,68 @@
           </div>
         {% else %}
           <p class="empty-state">No events this week.</p>
+        {% endif %}
+      </section>
+      {% endif %}
+
+      {% if show_month %}
+      <section class="panel panel-month">
+        <div class="month-header">
+          <h2>{{ month_name }} {{ month_year }}</h2>
+        </div>
+
+        <div class="calendar-grid">
+          <div class="calendar-headers">
+            {% for header in calendar_headers %}
+            <div class="calendar-header-cell">{{ header }}</div>
+            {% endfor %}
+          </div>
+          
+          {% for week in calendar_weeks %}
+          <div class="calendar-week">
+            {% for day in week %}
+            {% if day %}
+            <a href="/month?month={{ month_year }}-{{ '%02d' % month_num }}&day={{ day.day }}" 
+               class="calendar-day {% if day.date_iso == today_str %}today{% endif %} {% if selected_day == day.day|string %}selected{% endif %}">
+              <span class="day-number">{{ day.day }}</span>
+              {% if day.has_events %}
+              <div class="day-events">
+                {% for evt in day.events[:3] %}
+                <span class="event-dot {{ evt.category_class }}"></span>
+                {% endfor %}
+                {% if day.event_count > 3 %}
+                <span class="event-dot-more">+{{ day.event_count - 3 }}</span>
+                {% endif %}
+              </div>
+              {% endif %}
+            </a>
+            {% else %}
+            <div class="calendar-day empty"></div>
+            {% endif %}
+            {% endfor %}
+          </div>
+          {% endfor %}
+        </div>
+
+        {% if selected_day %}
+        <div class="selected-day-events">
+          <h3>Events for {{ month_name }} {{ selected_day }}</h3>
+          {% if selected_events %}
+            <div class="event-list compact">
+              {% for event in selected_events %}
+              <article class="event-card compact-card">
+                <div class="event-content">
+                  <h3>{{ event.title }}</h3>
+                  <p class="event-time">{{ event.time_label }}</p>
+                </div>
+                <span class="category-pill {{ event.category_class }}">{{ event.category }}</span>
+              </article>
+              {% endfor %}
+            </div>
+          {% else %}
+            <p class="empty-state">No events on this day.</p>
+          {% endif %}
+        </div>
         {% endif %}
       </section>
       {% endif %}
